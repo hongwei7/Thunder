@@ -56,6 +56,23 @@ namespace Thunder
             y = (int)IMG.Margin.Top;
         }
     }
+    public class enemy:plane
+    {
+        enemy(int _x,int _y,int hp,int Mhp,Image img):base(_x,_y,hp,Mhp,img)
+        { }
+        public override void move(Image img)
+        {
+            base.move(img);
+        }
+        public override void be_attack()
+        {
+            base.be_attack();
+        }
+        public override void attack()
+        {
+            base.attack();
+        }
+    }
     public class player : plane
     {
         Label hplabel;
@@ -126,23 +143,6 @@ namespace Thunder
         }
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            /*
-            if (e.Key == Key.Left)
-            {
-                player_1.Tag = "L";
-            }
-            if (e.Key == Key.Right)
-            {
-                player_1.Tag = "R";
-            }
-            if (e.Key == Key.Up)
-            {
-                player_1.Tag = "U";
-            }
-            if (e.Key == Key.Down)
-            {
-                player_1.Tag = "D";
-            }*/
             player_1.Tag = "";
             if (Keyboard.IsKeyDown(Key.Left))
                 player_1.Tag += "L";
@@ -159,7 +159,6 @@ namespace Thunder
             Window_KeyDown(sender, e);
             if (player_1.Tag.ToString() == "")
                 player_1.Tag = "";
-
         }
     }
 }

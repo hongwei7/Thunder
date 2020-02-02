@@ -8,7 +8,7 @@
         Title="MainWindow" Height="666" Width="623" ResizeMode="NoResize" KeyDown="Window_KeyDown" KeyUp="Window_KeyUp">
     <Grid Height="652">
         <Image x:Name="player_1" HorizontalAlignment="Left" Height="60" VerticalAlignment="Top" Width="60" Source="plane.jpg" Margin="270,458,0,0"/>
-        <Label x:Name="HPinfo" Content="" Margin="333,574,21,45" FontSize="20"/>
+        <Label x:Name="HPinfo" Content="" Margin="410,573,-56,46" FontSize="20"/>
 
     </Grid>
 </Window>
