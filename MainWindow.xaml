@@ -1,0 +1,14 @@
+﻿<Window x:Class="Thunder.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Thunder"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="666" Width="623" ResizeMode="NoResize" KeyDown="Window_KeyDown" KeyUp="Window_KeyUp">
+    <Grid Height="652">
+        <Image x:Name="player_1" HorizontalAlignment="Left" Height="60" VerticalAlignment="Top" Width="60" Source="plane.jpg" Margin="270,458,0,0"/>
+        <Label x:Name="HPinfo" Content="" Margin="333,574,21,45" FontSize="20"/>
+
+    </Grid>
+</Window>
