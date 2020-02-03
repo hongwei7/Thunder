@@ -7,11 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="bullet.png" />
     <None Remove="plane.jpg" />
+    <None Remove="plane.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="bullet.png" />
     <Resource Include="plane.jpg" />
+    <Resource Include="plane.png" />
   </ItemGroup>
 
 </Project>
