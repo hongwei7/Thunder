@@ -7,10 +7,15 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="666" Width="623" ResizeMode="NoResize" KeyDown="Window_KeyDown" KeyUp="Window_KeyUp">
     <Grid x:Name="background" Height="652">
-        <Image x:Name="player_1" HorizontalAlignment="Center" Height="92" VerticalAlignment="Center" Width="63" Source="plane.png" Margin="282,326,0,0"/>
-        <Label x:Name="HPinfo" Content="hp" Margin="410,573,-56,46" FontSize="20"/>
+        <Image x:Name="backimg1" Source="background.jpg" Margin="-146,-676,-56,0" Stretch="Fill"></Image>
+        <Image x:Name="backimg2" Source="background.jpg" Margin="-146,-2004,-56,1328" Stretch="Fill"></Image>
+        
+        <Image x:Name="player_1" HorizontalAlignment="Left" Height="92" VerticalAlignment="Top" Width="63" Source="plane.png" Margin="282,483,0,0"/>
+        
+        <Label x:Name="HPinfo" Content="hp" Margin="410,587,-56,32" FontSize="20"/>
         <TextBlock x:Name="temp" HorizontalAlignment="Left" Height="31" Margin="37,594,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="160"/>
-        <Image HorizontalAlignment="Left" Height="69" Margin="-73,363,0,0" VerticalAlignment="Top" Width="64" Source="bullet.png"/>
-
+        <Image HorizontalAlignment="Center" Height="69" Margin="0,1000,0,0" VerticalAlignment="Center" Width="64" Source="bullet.png"/>
+        <Image HorizontalAlignment="Center" Height="69" Margin="0,1000,0,0" VerticalAlignment="Center" Width="64" Source="enemy.png" />
+        <Image HorizontalAlignment="Center" Height="69" Margin="0,1000,0,0" VerticalAlignment="Center" Width="64" Source="bullet1.png" />
     </Grid>
 </Window>
