@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="background.jpg" />
+    <None Remove="boom.png" />
     <None Remove="bullet.png" />
     <None Remove="enemy.png" />
     <None Remove="plane.jpg" />
@@ -16,6 +17,7 @@
 
   <ItemGroup>
     <Resource Include="background.jpg" />
+    <Resource Include="boom.png" />
     <Resource Include="bullet.png" />
     <Resource Include="enemy.png" />
     <Resource Include="plane.jpg" />

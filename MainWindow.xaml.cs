@@ -14,23 +14,84 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Thunder
-{
-    public class bullets
+{   
+    public class Enemies
     {
-        public Image player;
-        private Grid background;
-        bullet[] childrens=new bullet[5];
-        Queue<int> empty_queue = new Queue<int>();
-        public bullets(Grid back)
+        public static int num = 10;
+        public Player player;
+        Random ran = new Random();
+        public Grid background;
+        public Enemy[] childrens = new Enemy[num];
+        public Bullets[] childrens_bullets = new Bullets[num];
+        public Queue<int> empty_queue = new Queue<int>();
+        int add_time = 0;
+        public Enemies(Grid back,Player _player)
         {
+            player = _player;
             background = back;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < num; i++)
             {
                 empty_queue.Enqueue(i);
-                childrens[i] = new bullet(background);
+                childrens_bullets[i] = new Bullets(background, null);
+                childrens[i] = new Enemy(2, 2, null, childrens_bullets[i],player,background,i);
+
             }
         }
-        public void add(int x,int y,int stepx,int stepy)
+        public  void Add()
+        {
+            if (empty_queue.Count() >= 1)
+            {
+                int i = empty_queue.Dequeue();
+                Image en = new Image();
+                BitmapImage bimage = new BitmapImage();
+                bimage.BeginInit();
+                bimage.UriSource = new Uri("enemy.png", UriKind.Relative);
+                bimage.EndInit();
+                en.Source = (System.Windows.Media.ImageSource)bimage;
+                Thickness mov = new Thickness(ran.Next(-600,600),ran.Next(-800,-700),0,0);
+
+                en.Margin = mov;
+                en.Width = 60;
+                en.Height = 60;
+                background.Children.Add(en);
+                childrens_bullets[i] = new Bullets(background,en);
+                childrens[i] = new Enemy(2, 2, en, childrens_bullets[i],player,background,i);
+            }
+        }
+        public void Timer_tick(object sender, EventArgs e)
+        {
+            add_time = (add_time + 1) % 100;
+            if(add_time==1)
+                Add();
+            for (int i = 0; i < 10; i++)
+            {
+                if(!empty_queue.Contains(i))
+                {
+                    childrens[i].Timer_Tick(sender,e);
+                }
+
+                childrens_bullets[i].Timer_tick();
+            }
+        }
+    }
+    public class Bullets
+    {
+        public static int num = 3;
+        public Image player;
+        private Grid background;
+        public Bullet[] childrens = new Bullet[num];
+        public Queue<int> empty_queue = new Queue<int>();
+        public Bullets(Grid back, Image p)
+        {
+            background = back;
+            player = p;
+            for (int i = 0; i < num; i++)
+            {
+                empty_queue.Enqueue(i);
+                childrens[i] = new Bullet(background, i, this);
+            }
+        }
+        public void Add(int x, int y, int stepx, int stepy)
         {
             if (empty_queue.Count() >= 1) {
                 int i = empty_queue.Dequeue();
@@ -55,120 +116,141 @@ namespace Thunder
                 childrens[i].img = en;
             }
         }
-        public void timer_tick()
+        public void Timer_tick()
         {
-            int i = 0;
-            foreach(bullet b in childrens)
+            for (int i = 0; i < num; i++)
             {
-                if (!b.move())
+                if(!empty_queue.Contains(i))
                 {
-                    childrens[i] = new bullet(background);
-                    empty_queue.Enqueue(i);
+                    childrens[i].Move();
                 }
-                i++;
             }
+    
         }
     }
-    public class bullet
+    public class Bullet
     {
+        public int tag;
         public int x, y;
+        private Bullets father;
         public int step_x, step_y;
         public Image img;
         private Grid background;
-        public bullet(Grid back)
+        public Bullet(Grid back,int t,Bullets f)
         {
+            tag = t;
+            father = f;
             background = back;
         }
-        private bool check_bullet()
+        public void Destroy()
         {
-            return true;
+            background.Children.Remove(img);
+            father.empty_queue.Enqueue(tag);
+            
         }
-        public bool move()
+
+
+        public  void Move()
         {
             if (img == null)
-                return true;
+                return ;
             x += step_x;
             y += step_y;
-            if (check_bullet())
+            if (y<800&&y>-800)
             {
                 Thickness mov = img.Margin;
                 mov.Left = x;
                 mov.Top = y;
                 img.Margin = mov;
-                return true;
             }
             else
             {
-                background.Children.Remove(img);
-                return false;
+                Destroy();
              }
                 
-        }   
+        }
+
+
     }
 
-    public class plane
+    public class Plane
     {
         public int HP, MAXHP;
         public int x, y;
         public Image IMG;
-        public plane( int hp, int Mhp,Image img)
+        public Plane( int hp, int Mhp,Image img)
         {
             IMG = img;
+            if (IMG == null)
+                return;
             x = (int)IMG.Margin.Left;
             y = (int)IMG.Margin.Top;
             HP = hp;
             MAXHP = Mhp;
             
         }
-        public virtual void move(Image player_1)//移动函数
+        public virtual void Move(Image player_1)//移动函数
         {
 
         }
-        public virtual void attack()//攻击函数
+        public virtual void Attack()//攻击函数
         {
 
         }
-        public virtual bool check_plane()//检查是否被攻击
+        public virtual bool Check_plane()//检查是否被攻击
         {
             return false;
         }
-        public virtual void be_attack() //被攻击后执行函数
+        public virtual void Be_attack() //被攻击后执行函数
         {
-            HP--;
-            if (HP == 0)
-                IMG.Source=null;
+            HP=HP-1;
         }
-        public virtual void  timer_Tick(object sender, EventArgs e)
+        public virtual void End()//飞机被击落
+        {
+
+        }
+        public virtual void  Timer_Tick(object sender, EventArgs e)
         {
             x = (int)IMG.Margin.Left;
             y = (int)IMG.Margin.Top;
-            if (check_plane())
-                be_attack();
-            move(IMG);
-            attack();
+            if (Check_plane())
+                Be_attack();
+            Move(IMG);
+            Attack();
             x = (int)IMG.Margin.Left;
             y = (int)IMG.Margin.Top;
+            if(HP==0)
+            {
+                End();
+                return;
+            }
         }
     }
-    public class enemy:plane
+    public class Enemy:Plane
     {
+        private Player player;
+        private int tag;
         int attack_time = 0;
         int move_time = 0;
         int endx, endy;
-        private bullets enemy_bullets;
-        
-        public enemy(int hp,int Mhp,Image img,bullets enemyb):base(hp,Mhp,img)
+        private Bullets enemy_bullets;
+        private Grid background;
+        Random ran = new Random();
+        public Enemy(int hp,int Mhp,Image img,Bullets enemyb,Player _p,Grid back,int t):base(hp,Mhp,img)
         {
+            tag = t;
+            background = back;
             enemy_bullets = enemyb;
+            player = _p;
             endx = -x;
-            endy = y+430;
+            endy = y+ran.Next( 700,800);
         }
-        public override void move(Image img)
+        public override void Move(Image img)
         {
             move_time = (move_time + 1) %3;
             if (move_time!=1) {
                 Thickness mov = img.Margin;
-                mov.Left -= (x - endx) / 25;
+                mov.Left -= (x - endx) / 30;
                 mov.Top -= (y - endy) / 50;
                 img.Margin = mov;
             }
@@ -177,37 +259,76 @@ namespace Thunder
                 endx = -endx;
                 endy = -System.Math.Abs((int)(2 * y));
             }
+            if(y<-900)
+            {
+                End();
+            }
         }
-        public override void be_attack()
+        public override bool Check_plane()
         {
-            base.be_attack();
+            for (int i = 0; i < Bullets.num; i++)
+            {
+                if(!player.player_bullets.empty_queue.Contains(i))
+                {
+                    Bullet b = player.player_bullets.childrens[i];
+                    if((System.Math.Abs(b.x - x) < 80 && System.Math.Abs(b.y - y) < 10) || (System.Math.Abs(b.x - x) < 5 && System.Math.Abs(b.y - y) < 40))
+                    {
+                        Image en = new Image();
+                        BitmapImage bimage = new BitmapImage();
+                        bimage.BeginInit();
+                        bimage.UriSource = new Uri("/boom.png", UriKind.Relative);
+                        bimage.EndInit();
+                        en.Source = (System.Windows.Media.ImageSource)bimage;
+                        Thickness mov = b.img.Margin;
+                        en.Margin = mov;
+                        en.Width = 30;
+                        en.Height = 30;
+                        background.Children.Add(en);
+                        b.Destroy();
+                        
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
-        public override void attack()
+        public override void End()
         {
-            base.attack();
+            player.enemies.background.Children.Remove(IMG);
+            player.enemies.empty_queue.Enqueue(tag);
+        }
+        public override void Be_attack()
+        {
+            base.Be_attack();
+        }
+        public override void Attack()
+        {
+            base.Attack();
             attack_time = (attack_time + 1) % 60;
             if (attack_time == 1)
             {
-                enemy_bullets.add(x, y + 40, 0, 10);
+                enemy_bullets.Add(x, y + 40, 0, 10);
             }
         }
-        public override void timer_Tick(object sender, EventArgs e)
+        public override void Timer_Tick(object sender, EventArgs e)
         {
-            base.timer_Tick(sender, e);
+            base.Timer_Tick(sender, e);
+
         }
     }
-    public class player : plane
+    public class Player : Plane
     {
         private Label hplabel;
-        private bullets player_bullets, enemy_bullets;
+        public Bullets player_bullets;
+        public Enemies enemies;
         private int attack_time=0;
-        public player( int hp, int Mhp,Image img,Label hpb,bullets playerb,bullets enemyb) : base( hp, Mhp,img)
+        public Player( int hp, int Mhp,Image img,Label hpb,Bullets playerb,Enemies enemyb) : base( hp, Mhp,img)
         {
             hplabel = hpb;
             player_bullets = playerb;
-            enemy_bullets = enemyb;
+            enemies = enemyb;
         }
-        public override void move(Image player_1)
+        public override void Move(Image player_1)
         {
             int step = 5;
             foreach (char i in player_1.Tag.ToString())
@@ -239,26 +360,61 @@ namespace Thunder
 
             }
         }
-        public override void attack()
+        public override void Attack()
         {
-            base.attack();
+            base.Attack();
             attack_time = (attack_time + 1) % 50;
             if(attack_time==1)
             {
-                player_bullets.add(x,y-20,0,-10);
+                player_bullets.Add(x,y-20,0,-10);
             }
         }
-        public override void timer_Tick(object sender, EventArgs e)
+        public override void Timer_Tick(object sender, EventArgs e)
         {
-            base.timer_Tick(sender, e);
-            player_bullets.timer_tick();
-            enemy_bullets.timer_tick();
+            base.Timer_Tick(sender, e);
+            player_bullets.Timer_tick();
+            enemies.Timer_tick(sender, e);
             hplabel.Content = "HP:" + HP.ToString() + "/" + MAXHP.ToString();
         }
-    
-        public override void be_attack()
+
+        public override bool Check_plane()
         {
-            base.be_attack();
+            for(int i=0;i<Enemies.num;i++)
+            {
+                if(!enemies.empty_queue.Contains(i))
+                {
+                    for(int j=0;j<Bullets.num;j++)
+                    {
+                        if(!enemies.childrens_bullets[i].empty_queue.Contains(j) )
+                        {
+                            Bullet b = enemies.childrens_bullets[i].childrens[j];
+                            
+                            if ((System.Math.Abs(b.x-x)<70&&System.Math.Abs(b.y-y)<10)|| (System.Math.Abs(b.x - x) < 5 && System.Math.Abs(b.y - y) < 80))
+                            {
+                                
+                                Image en = new Image();
+                                BitmapImage bimage = new BitmapImage();
+                                bimage.BeginInit();
+                                bimage.UriSource = new Uri("/boom.png", UriKind.Relative);
+                                bimage.EndInit();
+                                en.Source = (System.Windows.Media.ImageSource)bimage;
+                                Thickness mov = b.img.Margin;
+                                en.Margin = mov;
+                                en.Width = 30;
+                                en.Height = 30;
+                                enemies.background.Children.Add(en);
+                                b.Destroy();
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        public override void Be_attack()
+        {
+            base.Be_attack();
         }
     }
 
@@ -267,12 +423,12 @@ namespace Thunder
     /// </summary>
     public partial class MainWindow : Window
     {
-        public void debug(object sender, EventArgs e)
+        public void Debug(object sender, EventArgs e)
         {
             temp.Text = player_1.Margin.ToString();
            
         }
-        public void backimgmove(object sender, EventArgs e)
+        public void Backimgmove(object sender, EventArgs e)
         {
             Thickness mov = backimg1.Margin;
             if (mov.Top == 657)
@@ -309,50 +465,16 @@ namespace Thunder
         {
             System.Windows.Threading.DispatcherTimer timer;
             InitializeComponent();
-            bullets player_bullets = new bullets(background);
-            player_bullets.player = player_1;
+            Bullets player_bullets = new Bullets(background,player_1);
             player_1.Tag = "N";
-            bullets enemy_bullets = new bullets(background);
-            player player1 = new player(10,10,player_1,HPinfo,player_bullets,enemy_bullets);
+            Enemies enemies1 = new Enemies(background,null);
+            Player player1 = new Player(10,10,player_1,HPinfo,player_bullets,enemies1);
+            enemies1.player = player1;
             timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0,0,1);   //间隔1秒
-            timer.Tick += new EventHandler(player1.timer_Tick );
-            timer.Tick += new EventHandler(backimgmove);
-
-            Image en = new Image();
-            BitmapImage bimage = new BitmapImage();
-            bimage.BeginInit();
-            bimage.UriSource = new Uri("enemy.png", UriKind.Relative);
-            bimage.EndInit();
-            en.Source = (System.Windows.Media.ImageSource)bimage;
-            Thickness mov = player_1.Margin;
-            mov.Left = -400;
-            mov.Top = -400;
-            en.Margin = mov;
-            en.Width = 60;
-            en.Height = 60;
-            background.Children.Add(en);
-            
-            enemy enemy1 = new enemy( 3, 3, en, enemy_bullets);
-            enemy_bullets.player = en;
-            timer.Tick += new EventHandler(enemy1.timer_Tick);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);   //间隔1秒
+            timer.Tick += new EventHandler(player1.Timer_Tick);
+            timer.Tick += new EventHandler(Backimgmove);
             timer.Start();
-            
-            /*
-            Image en = new Image();
-            BitmapImage bimage = new BitmapImage();
-            bimage.BeginInit();
-            bimage.UriSource = new Uri("/plane.png", UriKind.Relative);
-            bimage.EndInit();
-            en.Source = (System.Windows.Media.ImageSource)bimage;
-            Thickness mov = new Thickness();
-            mov.Left = 0;
-            mov.Top = 0;
-            en.Margin = mov;
-            en.Width = 30;
-            en.Height = 30;
-            background.Children.Add(en);
-            */
 
 
         }
