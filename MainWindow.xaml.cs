@@ -14,66 +14,92 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Thunder
-{   
-    public class Enemies
+{
+    public class Booms
     {
-        public static int num = 10;
-        public Player player;
-        Random ran = new Random();
+        public static int num = 4;
         public Grid background;
-        public Enemy[] childrens = new Enemy[num];
-        public Bullets[] childrens_bullets = new Bullets[num];
+        public Boom[] childrens = new Boom[num];
         public Queue<int> empty_queue = new Queue<int>();
-        int add_time = 0;
-        public Enemies(Grid back,Player _player)
+        public Booms(Grid back)
         {
-            player = _player;
             background = back;
-            for (int i = 0; i < num; i++)
+            for(int i=0;i<num;i++)
             {
                 empty_queue.Enqueue(i);
-                childrens_bullets[i] = new Bullets(background, null);
-                childrens[i] = new Enemy(2, 2, null, childrens_bullets[i],player,background,i);
-
             }
         }
-        public  void Add()
+        public void Add(Thickness p)
         {
             if (empty_queue.Count() >= 1)
             {
                 int i = empty_queue.Dequeue();
-                Image en = new Image();
-                BitmapImage bimage = new BitmapImage();
-                bimage.BeginInit();
-                bimage.UriSource = new Uri("enemy.png", UriKind.Relative);
-                bimage.EndInit();
-                en.Source = (System.Windows.Media.ImageSource)bimage;
-                Thickness mov = new Thickness(ran.Next(-600,600),ran.Next(-800,-700),0,0);
-
-                en.Margin = mov;
-                en.Width = 60;
-                en.Height = 60;
-                background.Children.Add(en);
-                childrens_bullets[i] = new Bullets(background,en);
-                childrens[i] = new Enemy(2, 2, en, childrens_bullets[i],player,background,i);
+                childrens[i] = new Boom(p,background,this,i);
             }
         }
-        public void Timer_tick(object sender, EventArgs e)
+        public void Timer_tick()
         {
-            add_time = (add_time + 1) % 100;
-            if(add_time==1)
-                Add();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < num; i++)
             {
-                if(!empty_queue.Contains(i))
+                if (!empty_queue.Contains(i))
                 {
-                    childrens[i].Timer_Tick(sender,e);
+                    childrens[i].Timer_tick();
                 }
-
-                childrens_bullets[i].Timer_tick();
             }
         }
     }
+    public class Boom
+    {
+        private int time = 0;
+        private int tag;
+        private Thickness pos;
+        private Grid background;
+        private Booms father;
+        private Image en;
+        public Boom(Thickness p,Grid back,Booms _father,int t)
+        {
+            tag = t;
+            pos = p;
+            background = back;
+            father = _father;
+        }
+        public virtual void Timer_tick()
+        {
+            time++;
+            string png = "/" + (time / 2 + 1).ToString() + ".png";
+            if(time==1)
+            {
+                en = new Image();
+                BitmapImage bimage = new BitmapImage();
+                bimage.BeginInit();
+                bimage.UriSource = new Uri(png, UriKind.Relative);
+                bimage.EndInit();
+                en.Source = (System.Windows.Media.ImageSource)bimage;
+                Thickness mov = pos;
+                en.Margin = mov;
+                en.Width = 80;
+                en.Height = 80;
+                background.Children.Add(en);
+            }
+            if(time>1&&time<13)
+            {
+                background.Children.Remove(en);
+                BitmapImage bimage = new BitmapImage();
+                bimage.BeginInit();
+                bimage.UriSource = new Uri(png, UriKind.Relative);
+                bimage.EndInit();
+                en.Source = (System.Windows.Media.ImageSource)bimage;
+                background.Children.Add(en);
+            }
+            if(time==13)
+            {
+                background.Children.Remove(en);
+                father.empty_queue.Enqueue(tag);
+            }
+        }
+    }
+
+
     public class Bullets
     {
         public static int num = 3;
@@ -111,7 +137,7 @@ namespace Thunder
                 mov.Top = y;
                 en.Margin = mov;
                 en.Width = 30;
-                en.Height = 20;
+                en.Height = 15;
                 background.Children.Add(en);
                 childrens[i].img = en;
             }
@@ -156,7 +182,7 @@ namespace Thunder
                 return ;
             x += step_x;
             y += step_y;
-            if (y<800&&y>-800)
+            if (y<800&&y>-600)
             {
                 Thickness mov = img.Margin;
                 mov.Left = x;
@@ -209,6 +235,10 @@ namespace Thunder
         {
 
         }
+        public virtual void Boom_an()//爆炸动画
+        {
+
+        }
         public virtual void  Timer_Tick(object sender, EventArgs e)
         {
             x = (int)IMG.Margin.Left;
@@ -219,11 +249,70 @@ namespace Thunder
             Attack();
             x = (int)IMG.Margin.Left;
             y = (int)IMG.Margin.Top;
-            if(HP==0)
+            
+        }
+    }
+    public class Enemies
+    {
+        public int score = 0;
+        TextBlock scoreboard;
+        public static int num = 8;
+        public Player player;
+        Random ran = new Random();
+        public Grid background;
+        public Enemy[] childrens = new Enemy[num];
+        public Bullets[] childrens_bullets = new Bullets[num];
+        public Queue<int> empty_queue = new Queue<int>();
+        int add_time = 0;
+        public Enemies(Grid back, Player _player,TextBlock sb)
+        {
+            scoreboard = sb;
+            player = _player;
+            background = back;
+            for (int i = 0; i < num; i++)
             {
-                End();
-                return;
+                empty_queue.Enqueue(i);
+                childrens_bullets[i] = new Bullets(background, null);
+                childrens[i] = new Enemy(2, 2, null, childrens_bullets[i], player, background, i);
+
             }
+        }
+        public void Add()
+        {
+            if (empty_queue.Count() >= 1)
+            {
+                int i = empty_queue.Dequeue();
+                Image en = new Image();
+                BitmapImage bimage = new BitmapImage();
+                bimage.BeginInit();
+                bimage.UriSource = new Uri("enemy.png", UriKind.Relative);
+                bimage.EndInit();
+                en.Source = bimage;
+                Thickness mov = new Thickness(ran.Next(-600, 600), ran.Next(-800, -700), 0, 0);
+
+                en.Margin = mov;
+                en.Width = 60;
+                en.Height = 60;
+                background.Children.Add(en);
+                childrens_bullets[i] = new Bullets(background, en);
+                childrens[i] = new Enemy(2, 2, en, childrens_bullets[i], player, background, i);
+            }
+        }
+        public void Timer_tick(object sender, EventArgs e)
+        {
+            add_time = (add_time + 1) % 80;
+            if (add_time == 1)
+                Add();
+            for (int i = 0; i < num; i++)
+            {
+                if (!empty_queue.Contains(i))
+                {
+                    childrens[i].Timer_Tick(sender, e);
+                }
+
+                childrens_bullets[i].Timer_tick();
+            }
+            scoreboard.Text = "Score " + score.ToString();
         }
     }
     public class Enemy:Plane
@@ -256,7 +345,7 @@ namespace Thunder
             }
             if(System.Math.Abs(x - endx) <50)
             {
-                endx = -endx;
+                endx = -endx+ran.Next(-150,150);
                 endy = -System.Math.Abs((int)(2 * y));
             }
             if(y<-900)
@@ -273,19 +362,18 @@ namespace Thunder
                     Bullet b = player.player_bullets.childrens[i];
                     if((System.Math.Abs(b.x - x) < 80 && System.Math.Abs(b.y - y) < 10) || (System.Math.Abs(b.x - x) < 5 && System.Math.Abs(b.y - y) < 40))
                     {
-                        Image en = new Image();
-                        BitmapImage bimage = new BitmapImage();
-                        bimage.BeginInit();
-                        bimage.UriSource = new Uri("/boom.png", UriKind.Relative);
-                        bimage.EndInit();
-                        en.Source = (System.Windows.Media.ImageSource)bimage;
-                        Thickness mov = b.img.Margin;
-                        en.Margin = mov;
-                        en.Width = 30;
-                        en.Height = 30;
-                        background.Children.Add(en);
                         b.Destroy();
-                        
+                        if (HP == 2)
+                        {
+                            background.Children.Remove(IMG);
+                            BitmapImage bit = new BitmapImage();
+                            bit.BeginInit();
+                            bit.UriSource = new Uri("/enemy_d.png", UriKind.Relative);
+                            bit.EndInit();
+                            IMG.Source = (System.Windows.Media.ImageSource)bit;
+                            background.Children.Add(IMG);
+                        }
+                        player.enemies.score += 10;
                         return true;
                     }
                 }
@@ -294,8 +382,13 @@ namespace Thunder
         }
         public override void End()
         {
+            
             player.enemies.background.Children.Remove(IMG);
             player.enemies.empty_queue.Enqueue(tag);
+        }
+        public override void Boom_an()
+        {
+            player.booms.Add(IMG.Margin);
         }
         public override void Be_attack()
         {
@@ -307,13 +400,24 @@ namespace Thunder
             attack_time = (attack_time + 1) % 60;
             if (attack_time == 1)
             {
-                enemy_bullets.Add(x, y + 40, 0, 10);
+                if(player.x>x)
+                    enemy_bullets.Add(x, y + 40, ran.Next(0,4), 10);
+                if(player.x<x)
+                    enemy_bullets.Add(x, y + 40, ran.Next(-4,0), 10);
             }
         }
         public override void Timer_Tick(object sender, EventArgs e)
         {
             base.Timer_Tick(sender, e);
-
+            if(attack_time==1)
+                player.enemies.score++;
+            if (HP == 0)
+            {
+                player.enemies.score += 20;
+                Boom_an();
+                End();
+                return;
+            }
         }
     }
     public class Player : Plane
@@ -321,9 +425,11 @@ namespace Thunder
         private Label hplabel;
         public Bullets player_bullets;
         public Enemies enemies;
+        public Booms booms;
         private int attack_time=0;
-        public Player( int hp, int Mhp,Image img,Label hpb,Bullets playerb,Enemies enemyb) : base( hp, Mhp,img)
+        public Player( int hp, int Mhp,Image img,Label hpb,Bullets playerb,Enemies enemyb,Booms b) : base( hp, Mhp,img)
         {
+            booms = b;
             hplabel = hpb;
             player_bullets = playerb;
             enemies = enemyb;
@@ -363,10 +469,10 @@ namespace Thunder
         public override void Attack()
         {
             base.Attack();
-            attack_time = (attack_time + 1) % 50;
+            attack_time = (attack_time + 1) % 25;
             if(attack_time==1)
             {
-                player_bullets.Add(x,y-20,0,-10);
+                player_bullets.Add(x,y-20,0,-20);
             }
         }
         public override void Timer_Tick(object sender, EventArgs e)
@@ -374,6 +480,7 @@ namespace Thunder
             base.Timer_Tick(sender, e);
             player_bullets.Timer_tick();
             enemies.Timer_tick(sender, e);
+            booms.Timer_tick();
             hplabel.Content = "HP:" + HP.ToString() + "/" + MAXHP.ToString();
         }
 
@@ -381,34 +488,22 @@ namespace Thunder
         {
             for(int i=0;i<Enemies.num;i++)
             {
-                if(!enemies.empty_queue.Contains(i))
-                {
+ 
                     for(int j=0;j<Bullets.num;j++)
                     {
                         if(!enemies.childrens_bullets[i].empty_queue.Contains(j) )
                         {
                             Bullet b = enemies.childrens_bullets[i].childrens[j];
                             
-                            if ((System.Math.Abs(b.x-x)<70&&System.Math.Abs(b.y-y)<10)|| (System.Math.Abs(b.x - x) < 5 && System.Math.Abs(b.y - y) < 80))
+                            if ((System.Math.Abs(b.x-x)<70&&System.Math.Abs(b.y-y)<15)|| (System.Math.Abs(b.x - x) < 5 && System.Math.Abs(b.y - y) < 80))
                             {
-                                
-                                Image en = new Image();
-                                BitmapImage bimage = new BitmapImage();
-                                bimage.BeginInit();
-                                bimage.UriSource = new Uri("/boom.png", UriKind.Relative);
-                                bimage.EndInit();
-                                en.Source = (System.Windows.Media.ImageSource)bimage;
-                                Thickness mov = b.img.Margin;
-                                en.Margin = mov;
-                                en.Width = 30;
-                                en.Height = 30;
-                                enemies.background.Children.Add(en);
                                 b.Destroy();
+                                booms.Add(b.img.Margin);
                                 return true;
                             }
                         }
                     }
-                }
+                
             }
             return false;
         }
@@ -423,11 +518,7 @@ namespace Thunder
     /// </summary>
     public partial class MainWindow : Window
     {
-        public void Debug(object sender, EventArgs e)
-        {
-            temp.Text = player_1.Margin.ToString();
-           
-        }
+
         public void Backimgmove(object sender, EventArgs e)
         {
             Thickness mov = backimg1.Margin;
@@ -467,15 +558,15 @@ namespace Thunder
             InitializeComponent();
             Bullets player_bullets = new Bullets(background,player_1);
             player_1.Tag = "N";
-            Enemies enemies1 = new Enemies(background,null);
-            Player player1 = new Player(10,10,player_1,HPinfo,player_bullets,enemies1);
+            Enemies enemies1 = new Enemies(background,null,scoreboard);
+            Booms booms = new Booms(background);
+            Player player1 = new Player(10,10,player_1,HPinfo,player_bullets,enemies1,booms);
             enemies1.player = player1;
             timer = new System.Windows.Threading.DispatcherTimer();
             timer.Interval = new TimeSpan(0, 0, 0, 0, 1);   //间隔1秒
             timer.Tick += new EventHandler(player1.Timer_Tick);
             timer.Tick += new EventHandler(Backimgmove);
             timer.Start();
-
 
         }
         private void Window_KeyDown(object sender, KeyEventArgs e)

@@ -12,11 +12,7 @@
 
         <Image x:Name="player_1" HorizontalAlignment="Center" Height="92" VerticalAlignment="Center" Width="63" Source="plane.png" Margin="0,483,0,0"/>
 
-        <Label x:Name="HPinfo" Content="hp" Margin="410,587,-56,32" FontSize="20" Foreground="White"/>
-        <TextBlock x:Name="temp" HorizontalAlignment="Left" Height="31" Margin="37,594,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="160"/>
-        <Image HorizontalAlignment="Center" Height="69" Margin="0,1000,0,0" VerticalAlignment="Center" Width="64" Source="bullet.png"/>
-        <Image HorizontalAlignment="Center" Height="69" Margin="0,1000,0,0" VerticalAlignment="Center" Width="64" Source="enemy.png" />
-        <Image HorizontalAlignment="Center" Height="69" Margin="0,1000,0,0" VerticalAlignment="Center" Width="64" Source="bullet1.png" />
-        <Image  HorizontalAlignment="Center" Height="100" Margin="244,-800,0,0" VerticalAlignment="Center" Width="100" Source="boom.png" Opacity="0.5"/>
+        <Label x:Name="HPinfo" Content="HP" Margin="402,598,-48,18" FontSize="20" Foreground="White"/>
+        <TextBlock x:Name="scoreboard" HorizontalAlignment="Left" Height="21" Margin="18,603,0,0" Text="Score" TextWrapping="Wrap" VerticalAlignment="Top" Width="234" FontSize="20" Foreground="White"/>
     </Grid>
 </Window>
