@@ -15,3 +15,4 @@
 - ~~玩家技能~~
 - ~~主菜单，UI素材~~
 
+- ~~把DispatcherTimer改为Timer，解决卡顿~~
