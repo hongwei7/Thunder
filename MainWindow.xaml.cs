@@ -700,21 +700,7 @@ namespace Thunder
             background.Children.Remove(player_1);
             //timer.Start();
         }
-        private void Window_KeyDown(object sender, EventArgs e)
-        {
-           player_1.Tag = "";
-            if (Keyboard.IsKeyDown(Key.T))
-                player_1.Tag += "T";
-            if (Keyboard.IsKeyDown(Key.Left))
-                player_1.Tag += "L";
-            if (Keyboard.IsKeyDown(Key.Right))
-                player_1.Tag += "R";
-            if (Keyboard.IsKeyDown(Key.Up))
-                player_1.Tag += "U";
-            if (Keyboard.IsKeyDown(Key.Down))
-                player_1.Tag += "D";
-            
-        }
+
 
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -742,11 +728,7 @@ namespace Thunder
             timer.Tick += new EventHandler(Backimgmove);
             timer.Tick += new EventHandler(Check_Death);
             timer.Tick += new EventHandler(player1.Thunder_act);
-            System.Windows.Threading.DispatcherTimer timer1=new System.Windows.Threading.DispatcherTimer();
-            timer1.Interval = new TimeSpan(0, 0, 0, 0, 100);
-            timer1.Tick += new EventHandler(Window_KeyDown);
             timer.Start();
-            timer1.Start();
             background.Children.Remove(Start);
             background.Children.Remove(Exit);
             background.Children.Remove(Picture);
@@ -755,6 +737,26 @@ namespace Thunder
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Window_KeyDown_1(object sender, KeyEventArgs e)
+        {
+            player_1.Tag = "";
+            if (Keyboard.IsKeyDown(Key.T))
+                player_1.Tag += "T";
+            if (Keyboard.IsKeyDown(Key.Left))
+                player_1.Tag += "L";
+            if (Keyboard.IsKeyDown(Key.Right))
+                player_1.Tag += "R";
+            if (Keyboard.IsKeyDown(Key.Up))
+                player_1.Tag += "U";
+            if (Keyboard.IsKeyDown(Key.Down))
+                player_1.Tag += "D";
+        }
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            Window_KeyDown_1(sender,e);
         }
     }
 }
