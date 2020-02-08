@@ -5,14 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Thunder"
         mc:Ignorable="d"
-        Title="MainWindow" Height="666" Width="623" ResizeMode="NoResize" KeyDown="Window_KeyDown" KeyUp="Window_KeyUp">
+        Title="雷电" Height="666" Width="623" ResizeMode="NoResize" KeyDown="Window_KeyDown" KeyUp="Window_KeyUp" Icon="title.jpg">
     <Grid x:Name="background" Height="652">
         <Image x:Name="backimg1" Source="background.jpg" Margin="-146,-676,-56,0" Stretch="Fill"></Image>
         <Image x:Name="backimg2" Source="background.jpg" Margin="-146,-2004,-56,1328" Stretch="Fill"></Image>
 
         <Image x:Name="player_1" HorizontalAlignment="Center" Height="92" VerticalAlignment="Center" Width="63" Source="plane.png" Margin="0,483,0,0"/>
 
-        <Label x:Name="HPinfo" Content="HP" Margin="402,598,-48,18" FontSize="20" Foreground="White"/>
-        <TextBlock x:Name="scoreboard" HorizontalAlignment="Left" Height="21" Margin="18,603,0,0" Text="Score" TextWrapping="Wrap" VerticalAlignment="Top" Width="234" FontSize="20" Foreground="White"/>
+        <Label x:Name="HPinfo" Content="" Margin="372,598,-18,18" FontSize="20" Foreground="White"/>
+        <TextBlock x:Name="scoreboard" HorizontalAlignment="Left" Height="21" Margin="18,603,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="234" FontSize="20" Foreground="White"/>
+
+        <Button x:Name="Start" Content="开始" HorizontalAlignment="Center" Height="30" Margin="0,425,0,0" VerticalAlignment="Top" Width="136" Click="Button_Click"/>
+        <Image x:Name="Picture" Source="BIG.png" Margin="76,14,77,168"/>
+        <Button x:Name="Exit" Content="退出" HorizontalAlignment="Center" Margin="0,476,0,0" VerticalAlignment="Top" Height="28" Width="136" Click="Button_Click_1"/>
     </Grid>
 </Window>

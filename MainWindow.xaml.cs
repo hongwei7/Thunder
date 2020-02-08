@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace Thunder
 {
@@ -37,7 +31,7 @@ namespace Thunder
                 childrens[i] = new Boom(p,background,this,i);
             }
         }
-        public void Timer_tick()
+        public void Timer_tick(object sender, EventArgs e)
         {
             for (int i = 0; i < num; i++)
             {
@@ -142,7 +136,7 @@ namespace Thunder
                 childrens[i].img = en;
             }
         }
-        public void Timer_tick()
+        public void Timer_tick(object sender, EventArgs e)
         {
             for (int i = 0; i < num; i++)
             {
@@ -174,8 +168,6 @@ namespace Thunder
             father.empty_queue.Enqueue(tag);
             
         }
-
-
         public  void Move()
         {
             if (img == null)
@@ -310,9 +302,28 @@ namespace Thunder
                     childrens[i].Timer_Tick(sender, e);
                 }
 
-                childrens_bullets[i].Timer_tick();
+                childrens_bullets[i].Timer_tick(sender,e);
             }
             scoreboard.Text = "Score " + score.ToString();
+        }
+
+        public void Destroy()
+        {
+            for (int i = 0; i < num; i++)
+            {
+                if (!empty_queue.Contains(i))
+                {
+                    childrens[i].End();
+                }
+
+                for (int j = 0; j < Bullets.num; j++)
+                {
+                    if (!childrens_bullets[i].empty_queue.Contains(j))
+                    {
+                        childrens_bullets[i].childrens[j].Destroy();
+                    }
+                }
+            }
         }
     }
     public class Enemy:Plane
@@ -355,6 +366,11 @@ namespace Thunder
         }
         public override bool Check_plane()
         {
+            if(player.thunder_active!=0&&((System.Math.Abs(player.x - x) < 40 && player.y > y)))
+            {
+                player.enemies.score += 10;
+                return true;
+            }
             for (int i = 0; i < Bullets.num; i++)
             {
                 if(!player.player_bullets.empty_queue.Contains(i))
@@ -409,8 +425,6 @@ namespace Thunder
         public override void Timer_Tick(object sender, EventArgs e)
         {
             base.Timer_Tick(sender, e);
-            if(attack_time==1)
-                player.enemies.score++;
             if (HP == 0)
             {
                 player.enemies.score += 20;
@@ -422,23 +436,97 @@ namespace Thunder
     }
     public class Player : Plane
     {
+        Image thunder;
         private Label hplabel;
         public Bullets player_bullets;
         public Enemies enemies;
         public Booms booms;
         private int attack_time=0;
-        public Player( int hp, int Mhp,Image img,Label hpb,Bullets playerb,Enemies enemyb,Booms b) : base( hp, Mhp,img)
+        private System.Windows.Threading.DispatcherTimer timer;
+        private int thunder_time = 0;
+        public int thunder_active=0;
+        private int thunder_score = 0;
+        private int gap = 300;
+        public Player( int hp, int Mhp,Image img,Label hpb,Bullets playerb,Enemies enemyb,Booms b, System.Windows.Threading.DispatcherTimer time) : base( hp, Mhp,img)
         {
+            timer = time;
             booms = b;
             hplabel = hpb;
             player_bullets = playerb;
             enemies = enemyb;
+            
+        }
+        public void Thunder_act(object sender, EventArgs e)
+        {
+            if (thunder_active == 0 )
+                return;
+            thunder_time++;
+            string png = "";
+            Thickness thpos = IMG.Margin;
+            thpos.Left += -20;
+            thpos.Top += -565;
+            png = "/after/1 (" + (thunder_time).ToString() + ").png";
+            if (thunder_time == 1)
+            {
+                if (HP > MAXHP-3)
+                    HP = MAXHP;
+                else
+                {
+                    HP += 3;
+                }
+                thunder = new Image();
+                BitmapImage bimage = new BitmapImage();
+                bimage.BeginInit();
+                bimage.UriSource = new Uri(png, UriKind.Relative);
+                bimage.EndInit();
+                thunder.Source = (System.Windows.Media.ImageSource)bimage;
+                thunder.Margin = thpos;
+                thunder.Width = 312;
+                thunder.Height = 716;
+                enemies.background.Children.Add(thunder);
+             }
+            if (thunder_time > 1 && thunder_time < 40)
+            {
+                enemies.background.Children.Remove(thunder);
+                thunder.Margin = thpos;
+                BitmapImage bimage = new BitmapImage();
+                bimage.BeginInit();
+                bimage.UriSource = new Uri(png, UriKind.Relative);
+                bimage.EndInit();
+                thunder.Source = (System.Windows.Media.ImageSource)bimage;
+                enemies.background.Children.Add(thunder);
+            }
+            if (thunder_time > 40 && thunder_time < 400)
+             {
+                png = "/after/1 (" + (thunder_time%40+16).ToString() + ").png";
+                enemies.background.Children.Remove(thunder);
+                thunder.Margin = thpos;
+                BitmapImage bimage = new BitmapImage();
+                bimage.BeginInit();
+                bimage.UriSource = new Uri(png, UriKind.Relative);
+                bimage.EndInit();
+                thunder.Source = (System.Windows.Media.ImageSource)bimage;
+                enemies.background.Children.Add(thunder);
+             }
+            if (thunder_time > 400)
+            {
+                enemies.background.Children.Remove(thunder);
+                thunder_active = 0;
+                thunder_time = 0;
+                thunder_score = enemies.score;
+            }
+            if(HP==0)
+                enemies.background.Children.Remove(thunder);
         }
         public override void Move(Image player_1)
         {
             int step = 5;
             foreach (char i in player_1.Tag.ToString())
             {
+                if(i=='T' && enemies.score-thunder_score>=gap)
+                {
+                    thunder_active = 1;
+                }
                 if (i == 'L'&&player_1.Margin.Left>-550)
                 {
                     Thickness mov = player_1.Margin;
@@ -470,25 +558,47 @@ namespace Thunder
         {
             base.Attack();
             attack_time = (attack_time + 1) % 25;
-            if(attack_time==1)
+            if(attack_time==1&&thunder_active==0)
             {
                 player_bullets.Add(x,y-20,0,-20);
             }
         }
+        public override void End()
+        {
+            enemies.background.Children.Remove(IMG);
+            timer.Tag = 0;
+
+        }
         public override void Timer_Tick(object sender, EventArgs e)
         {
             base.Timer_Tick(sender, e);
-            player_bullets.Timer_tick();
-            enemies.Timer_tick(sender, e);
-            booms.Timer_tick();
             hplabel.Content = "HP:" + HP.ToString() + "/" + MAXHP.ToString();
+            if((enemies.score - thunder_score) <gap)
+                hplabel.Content += "   雷电充能" + ((enemies.score - thunder_score) / 5).ToString() + "%";
+            else
+            {
+                hplabel.Content += "  按T释放雷电";
+            }
+            if(HP==0)
+            {
+                End();
+            }
         }
 
         public override bool Check_plane()
         {
-            for(int i=0;i<Enemies.num;i++)
+            if (thunder_active != 0)
+                return false;
+            for (int i = 0; i < Enemies.num; i++)
             {
- 
+                if (!enemies.empty_queue.Contains(i))
+                {
+                    if(System.Math.Abs(enemies.childrens[i].x-x)<60&& System.Math.Abs(enemies.childrens[i].y - y)<40)
+                    {
+                        booms.Add(IMG.Margin);
+                        return true;
+                    }
+                }
                     for(int j=0;j<Bullets.num;j++)
                     {
                         if(!enemies.childrens_bullets[i].empty_queue.Contains(j) )
@@ -505,12 +615,14 @@ namespace Thunder
                     }
                 
             }
-            return false;
+
+                return false;
         }
         public override void Be_attack()
         {
             base.Be_attack();
         }
+        
     }
 
     /// <summary>
@@ -518,7 +630,12 @@ namespace Thunder
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        System.Windows.Threading.DispatcherTimer timer;
+        Player player1;
+        Enemies enemies1;
+        Bullets player_bullets;
+        Booms booms;
+        TextBlock endmessage;
         public void Backimgmove(object sender, EventArgs e)
         {
             Thickness mov = backimg1.Margin;
@@ -549,29 +666,45 @@ namespace Thunder
                 mov.Bottom -= 1;
             }
             backimg2.Margin = mov;
-            
-
         }
+        public void Check_Death(object sender, EventArgs e)
+        {
+            if ((int)timer.Tag == 0)
+            {
+                timer.Tick -= new EventHandler(player1.Timer_Tick);
+                timer.Tick -= new EventHandler(enemies1.Timer_tick);
+                timer.Tick -= new EventHandler(Backimgmove);
+                timer.Tick -= new EventHandler(Check_Death);
+                timer.Tick -= new EventHandler(player1.Thunder_act);
+                background.Children.Add(Start);
+                background.Children.Add(Exit);
+                endmessage = new TextBlock();
+                endmessage.Text = "你的得分为： " + enemies1.score.ToString();
+                endmessage.Height = 100;
+                endmessage.Width = 400;
+                Thickness mar = new Thickness(0, 0, 0, 0);
+                endmessage.Margin = mar;
+                endmessage.FontSize = 30;
+                endmessage.TextAlignment = TextAlignment.Center;
+                endmessage.Foreground = new SolidColorBrush(Colors.White); 
+                enemies1.background.Children.Add(endmessage);
+                Start.Tag=1;
+                Start.Content = "重新开始";
+            }
+        }
+
         public MainWindow()
         {
-            System.Windows.Threading.DispatcherTimer timer;
             InitializeComponent();
-            Bullets player_bullets = new Bullets(background,player_1);
-            player_1.Tag = "N";
-            Enemies enemies1 = new Enemies(background,null,scoreboard);
-            Booms booms = new Booms(background);
-            Player player1 = new Player(10,10,player_1,HPinfo,player_bullets,enemies1,booms);
-            enemies1.player = player1;
-            timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);   //间隔1秒
-            timer.Tick += new EventHandler(player1.Timer_Tick);
-            timer.Tick += new EventHandler(Backimgmove);
-            timer.Start();
-
+            Start.Tag = 0;
+            background.Children.Remove(player_1);
+            //timer.Start();
         }
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             player_1.Tag = "";
+            if (Keyboard.IsKeyDown(Key.T))
+                player_1.Tag += "T";
             if (Keyboard.IsKeyDown(Key.Left))
                 player_1.Tag += "L";
             if (Keyboard.IsKeyDown(Key.Right))
@@ -580,11 +713,47 @@ namespace Thunder
                 player_1.Tag += "U";
             if (Keyboard.IsKeyDown(Key.Down))
                 player_1.Tag += "D";
+            
         }
-
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
             Window_KeyDown(sender, e);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if((int)Start.Tag==1)
+            {
+                background.Children.Remove(endmessage);
+                player_1.Margin = new Thickness(0, 483, 0, 0);
+                enemies1.Destroy();
+            }
+            background.Children.Add(player_1);
+            player_bullets = new Bullets(background, player_1);
+            player_1.Tag = "N";
+            enemies1 = new Enemies(background, null, scoreboard);
+            booms = new Booms(background);
+            timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Tag = 1;
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);   //间隔1秒
+            player1 = new Player(10, 10, player_1, HPinfo, player_bullets, enemies1, booms, timer);
+            enemies1.player = player1;
+            timer.Tick += new EventHandler(player1.Timer_Tick);
+            timer.Tick += new EventHandler(player_bullets.Timer_tick);
+            timer.Tick += new EventHandler(player1.booms.Timer_tick);
+            timer.Tick += new EventHandler(player1.enemies.Timer_tick);
+            timer.Tick += new EventHandler(Backimgmove);
+            timer.Tick += new EventHandler(Check_Death);
+            timer.Tick += new EventHandler(player1.Thunder_act);
+            timer.Start();
+            background.Children.Remove(Start);
+            background.Children.Remove(Exit);
+            background.Children.Remove(Picture);
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
