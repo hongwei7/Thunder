@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Timers;
 using System.Windows.Threading;
+using System.Windows.Media.Animation;
 
 namespace Thunder
 {
@@ -574,7 +575,7 @@ namespace Thunder
             base.Timer_Tick(sender, e);
             hplabel.Content = "HP:" + HP.ToString() + "/" + MAXHP.ToString();
             if((enemies.score - thunder_score) <gap)
-                hplabel.Content += "   雷电充能" + ((enemies.score - thunder_score) / 5).ToString() + "%";
+                hplabel.Content += "   雷电充能" + ((enemies.score - thunder_score) / 3).ToString() + "%";
             else
             {
                 hplabel.Content += "  按T释放雷电";
@@ -694,6 +695,10 @@ namespace Thunder
 
         public MainWindow()
         {
+            Timeline.DesiredFrameRateProperty.OverrideMetadata(
+               typeof(Timeline),
+               new FrameworkPropertyMetadata { DefaultValue = 90 }
+               );
             InitializeComponent();
             Start.Tag = 0;
             background.Children.Remove(player_1);
