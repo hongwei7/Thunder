@@ -700,9 +700,9 @@ namespace Thunder
             background.Children.Remove(player_1);
             //timer.Start();
         }
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void Window_KeyDown(object sender, EventArgs e)
         {
-            player_1.Tag = "";
+           player_1.Tag = "";
             if (Keyboard.IsKeyDown(Key.T))
                 player_1.Tag += "T";
             if (Keyboard.IsKeyDown(Key.Left))
@@ -715,10 +715,7 @@ namespace Thunder
                 player_1.Tag += "D";
             
         }
-        private void Window_KeyUp(object sender, KeyEventArgs e)
-        {
-            Window_KeyDown(sender, e);
-        }
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -745,7 +742,11 @@ namespace Thunder
             timer.Tick += new EventHandler(Backimgmove);
             timer.Tick += new EventHandler(Check_Death);
             timer.Tick += new EventHandler(player1.Thunder_act);
+            System.Windows.Threading.DispatcherTimer timer1=new System.Windows.Threading.DispatcherTimer();
+            timer1.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            timer1.Tick += new EventHandler(Window_KeyDown);
             timer.Start();
+            timer1.Start();
             background.Children.Remove(Start);
             background.Children.Remove(Exit);
             background.Children.Remove(Picture);

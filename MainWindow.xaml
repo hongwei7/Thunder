@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Thunder"
         mc:Ignorable="d"
-        Title="雷电" Height="666" Width="623" ResizeMode="NoResize" KeyDown="Window_KeyDown" KeyUp="Window_KeyUp" Icon="title.jpg">
+        Title="雷电" Height="666" Width="623" ResizeMode="NoResize" Icon="title.jpg">
     <Grid x:Name="background" Height="652">
         <Image x:Name="backimg1" Source="background.jpg" Margin="-146,-676,-56,0" Stretch="Fill"></Image>
         <Image x:Name="backimg2" Source="background.jpg" Margin="-146,-2004,-56,1328" Stretch="Fill"></Image>

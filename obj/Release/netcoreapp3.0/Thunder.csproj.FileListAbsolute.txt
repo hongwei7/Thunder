@@ -1,0 +1,17 @@
+C:\Users\hongwei\source\repos\Thunder\Thunder\bin\Release\netcoreapp3.0\Thunder.exe
+C:\Users\hongwei\source\repos\Thunder\Thunder\bin\Release\netcoreapp3.0\Thunder.deps.json
+C:\Users\hongwei\source\repos\Thunder\Thunder\bin\Release\netcoreapp3.0\Thunder.runtimeconfig.json
+C:\Users\hongwei\source\repos\Thunder\Thunder\bin\Release\netcoreapp3.0\Thunder.runtimeconfig.dev.json
+C:\Users\hongwei\source\repos\Thunder\Thunder\bin\Release\netcoreapp3.0\Thunder.dll
+C:\Users\hongwei\source\repos\Thunder\Thunder\bin\Release\netcoreapp3.0\Thunder.pdb
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\Thunder.csprojAssemblyReference.cache
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\MainWindow.g.cs
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\App.g.cs
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\Thunder_MarkupCompile.cache
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\Thunder_MarkupCompile.lref
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\MainWindow.baml
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\Thunder.g.resources
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\Thunder.AssemblyInfoInputs.cache
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\Thunder.AssemblyInfo.cs
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\Thunder.dll
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Release\netcoreapp3.0\Thunder.pdb
