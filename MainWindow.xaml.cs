@@ -34,7 +34,7 @@ namespace Thunder
                 childrens[i] = new Boom(p,background,this,i);
             }
         }
-        public void Timer_tick(object sender, EventArgs e)
+        public void Timer_tick()
         {
             for (int i = 0; i < num; i++)
             {
@@ -139,7 +139,7 @@ namespace Thunder
                 childrens[i].img = en;
             }
         }
-        public void Timer_tick(object sender, EventArgs e)
+        public void Timer_tick()
         {
             for (int i = 0; i < num; i++)
             {
@@ -234,7 +234,7 @@ namespace Thunder
         {
 
         }
-        public virtual void  Timer_Tick(object sender, EventArgs e)
+        public virtual void  Timer_Tick()
         {
             x = (int)IMG.Margin.Left;
             y = (int)IMG.Margin.Top;
@@ -293,7 +293,7 @@ namespace Thunder
                 childrens[i] = new Enemy(2, 2, en, childrens_bullets[i], player, background, i);
             }
         }
-        public void Timer_tick(object sender, EventArgs e)
+        public void Timer_tick()
         {
             add_time = (add_time + 1) % 80;
             if (add_time == 1)
@@ -302,10 +302,10 @@ namespace Thunder
             {
                 if (!empty_queue.Contains(i))
                 {
-                    childrens[i].Timer_Tick(sender, e);
+                    childrens[i].Timer_Tick();
                 }
 
-                childrens_bullets[i].Timer_tick(sender,e);
+                childrens_bullets[i].Timer_tick();
             }
             scoreboard.Text = "Score " + score.ToString();
         }
@@ -425,9 +425,9 @@ namespace Thunder
                     enemy_bullets.Add(x, y + 40, ran.Next(-4,0), 10);
             }
         }
-        public override void Timer_Tick(object sender, EventArgs e)
+        public override void Timer_Tick()
         {
-            base.Timer_Tick(sender, e);
+            base.Timer_Tick();
             if (HP == 0)
             {
                 player.enemies.score += 20;
@@ -457,7 +457,7 @@ namespace Thunder
             enemies = enemyb;
             
         }
-        public void Thunder_act(object sender, EventArgs e)
+        public void Thunder_act()
         {
             if (thunder_active == 0 )
                 return;
@@ -570,9 +570,9 @@ namespace Thunder
             enemies.background.Tag = 0;
 
         }
-        public override void Timer_Tick(object sender, EventArgs e)
+        public override void Timer_Tick()
         {
-            base.Timer_Tick(sender, e);
+            base.Timer_Tick();
             hplabel.Content = "HP:" + HP.ToString() + "/" + MAXHP.ToString();
             if((enemies.score - thunder_score) <gap)
                 hplabel.Content += "   雷电充能" + ((enemies.score - thunder_score) / 3).ToString() + "%";
@@ -638,7 +638,7 @@ namespace Thunder
         Booms booms;
         TextBlock endmessage;
         private delegate void TimerDispatcherDelegate();
-        public void Backimgmove(object sender, EventArgs e)
+        public void Backimgmove()
         {
             Thickness mov = backimg1.Margin;
             if (mov.Top == 657)
@@ -669,7 +669,7 @@ namespace Thunder
             }
             backimg2.Margin = mov;
         }
-        public void Check_Death(object sender, EventArgs e)
+        public void Check_Death()
         {
             if ((int)background.Tag == 0)
             {
@@ -712,14 +712,14 @@ namespace Thunder
             EventArgs e = new EventArgs();
             if ((int)background.Tag == 1)
             {
-                player1.Timer_Tick(A, e);
-                player1.enemies.Timer_tick(A, e);
-                Backimgmove(A, e);
-                Check_Death(A, e);
-                player1.Thunder_act(A, e);
+                player1.Timer_Tick();
+                player1.enemies.Timer_tick();
+                Backimgmove();
+                Check_Death();
+                player1.Thunder_act();
             }
-            player1.booms.Timer_tick(A, e);
-            player_bullets.Timer_tick(A, e);
+            player1.booms.Timer_tick();
+            player_bullets.Timer_tick();
 
         }
 
