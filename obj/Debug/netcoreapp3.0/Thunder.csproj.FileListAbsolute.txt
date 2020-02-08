@@ -14,3 +14,4 @@ C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Debug\netcoreapp3.0\Thunder.As
 C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Debug\netcoreapp3.0\Thunder.AssemblyInfo.cs
 C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Debug\netcoreapp3.0\Thunder.dll
 C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Debug\netcoreapp3.0\Thunder.pdb
+C:\Users\hongwei\source\repos\Thunder\Thunder\obj\Debug\netcoreapp3.0\Thunder.csprojAssemblyReference.cache

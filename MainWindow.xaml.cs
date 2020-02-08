@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Timers;
+using System.Windows.Threading;
 
 namespace Thunder
 {
@@ -442,14 +444,12 @@ namespace Thunder
         public Enemies enemies;
         public Booms booms;
         private int attack_time=0;
-        private System.Windows.Threading.DispatcherTimer timer;
         private int thunder_time = 0;
         public int thunder_active=0;
         private int thunder_score = 0;
         private int gap = 300;
-        public Player( int hp, int Mhp,Image img,Label hpb,Bullets playerb,Enemies enemyb,Booms b, System.Windows.Threading.DispatcherTimer time) : base( hp, Mhp,img)
+        public Player( int hp, int Mhp,Image img,Label hpb,Bullets playerb,Enemies enemyb,Booms b) : base( hp, Mhp,img)
         {
-            timer = time;
             booms = b;
             hplabel = hpb;
             player_bullets = playerb;
@@ -566,7 +566,7 @@ namespace Thunder
         public override void End()
         {
             enemies.background.Children.Remove(IMG);
-            timer.Tag = 0;
+            enemies.background.Tag = 0;
 
         }
         public override void Timer_Tick(object sender, EventArgs e)
@@ -630,12 +630,13 @@ namespace Thunder
     /// </summary>
     public partial class MainWindow : Window
     {
-        System.Windows.Threading.DispatcherTimer timer;
+        Timer timer;
         Player player1;
         Enemies enemies1;
         Bullets player_bullets;
         Booms booms;
         TextBlock endmessage;
+        private delegate void TimerDispatcherDelegate();
         public void Backimgmove(object sender, EventArgs e)
         {
             Thickness mov = backimg1.Margin;
@@ -669,13 +670,9 @@ namespace Thunder
         }
         public void Check_Death(object sender, EventArgs e)
         {
-            if ((int)timer.Tag == 0)
+            if ((int)background.Tag == 0)
             {
-                timer.Tick -= new EventHandler(player1.Timer_Tick);
-                timer.Tick -= new EventHandler(enemies1.Timer_tick);
-                timer.Tick -= new EventHandler(Backimgmove);
-                timer.Tick -= new EventHandler(Check_Death);
-                timer.Tick -= new EventHandler(player1.Thunder_act);
+
                 background.Children.Add(Start);
                 background.Children.Add(Exit);
                 endmessage = new TextBlock();
@@ -686,10 +683,12 @@ namespace Thunder
                 endmessage.Margin = mar;
                 endmessage.FontSize = 30;
                 endmessage.TextAlignment = TextAlignment.Center;
-                endmessage.Foreground = new SolidColorBrush(Colors.White); 
+                endmessage.Foreground = new SolidColorBrush(Colors.White);
                 enemies1.background.Children.Add(endmessage);
-                Start.Tag=1;
+                Start.Tag = 1;
                 Start.Content = "重新开始";
+                //timer.Enabled = false;
+
             }
         }
 
@@ -702,36 +701,56 @@ namespace Thunder
         }
 
 
+        private void Timer_Tick()
+        {
+            object A = new object();
+            EventArgs e = new EventArgs();
+            if ((int)background.Tag == 1)
+            {
+                player1.Timer_Tick(A, e);
+                player1.enemies.Timer_tick(A, e);
+                Backimgmove(A, e);
+                Check_Death(A, e);
+                player1.Thunder_act(A, e);
+            }
+            player1.booms.Timer_tick(A, e);
+            player_bullets.Timer_tick(A, e);
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        }
+
+    
+    private void Button_Click(object sender, RoutedEventArgs e)
         {
             if((int)Start.Tag==1)
             {
                 background.Children.Remove(endmessage);
                 player_1.Margin = new Thickness(0, 483, 0, 0);
                 enemies1.Destroy();
+                timer.Dispose();
             }
             background.Children.Add(player_1);
             player_bullets = new Bullets(background, player_1);
             player_1.Tag = "N";
             enemies1 = new Enemies(background, null, scoreboard);
             booms = new Booms(background);
-            timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Tag = 1;
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);   //间隔1秒
-            player1 = new Player(10, 10, player_1, HPinfo, player_bullets, enemies1, booms, timer);
+            background.Tag = 1;
+            player1 = new Player(10, 10, player_1, HPinfo, player_bullets, enemies1, booms);
             enemies1.player = player1;
-            timer.Tick += new EventHandler(player1.Timer_Tick);
-            timer.Tick += new EventHandler(player_bullets.Timer_tick);
-            timer.Tick += new EventHandler(player1.booms.Timer_tick);
-            timer.Tick += new EventHandler(player1.enemies.Timer_tick);
-            timer.Tick += new EventHandler(Backimgmove);
-            timer.Tick += new EventHandler(Check_Death);
-            timer.Tick += new EventHandler(player1.Thunder_act);
-            timer.Start();
+
             background.Children.Remove(Start);
             background.Children.Remove(Exit);
             background.Children.Remove(Picture);
+
+            timer = new Timer(10);
+            timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            timer.Interval = 10;
+            timer.Enabled = true;
+
+        }
+
+        private void OnTimedEvent(object sender, ElapsedEventArgs e)
+        {
+            this.Dispatcher.Invoke(DispatcherPriority.Normal, new TimerDispatcherDelegate(Timer_Tick));
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
