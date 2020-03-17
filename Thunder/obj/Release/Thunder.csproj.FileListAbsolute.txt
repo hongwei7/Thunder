@@ -1,0 +1,12 @@
+C:\Users\lulu\source\repos\Thunder\Thunder\bin\Release\Thunder.exe
+C:\Users\lulu\source\repos\Thunder\Thunder\bin\Release\Thunder.pdb
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\MainWindow.g.cs
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\App.g.cs
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\Thunder_MarkupCompile.cache
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\Thunder_MarkupCompile.lref
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\MainWindow.baml
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\Thunder.g.resources
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\Thunder.Properties.Resources.resources
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\Thunder.csproj.GenerateResource.cache
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\Thunder.exe
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Release\Thunder.pdb

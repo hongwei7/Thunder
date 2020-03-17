@@ -1,0 +1,13 @@
+C:\Users\lulu\source\repos\Thunder\Thunder\bin\Debug\Thunder.exe
+C:\Users\lulu\source\repos\Thunder\Thunder\bin\Debug\Thunder.pdb
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\Thunder.csprojAssemblyReference.cache
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\MainWindow.g.cs
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\App.g.cs
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\Thunder_MarkupCompile.cache
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\Thunder_MarkupCompile.lref
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\MainWindow.baml
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\Thunder.g.resources
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\Thunder.Properties.Resources.resources
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\Thunder.csproj.GenerateResource.cache
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\Thunder.exe
+C:\Users\lulu\source\repos\Thunder\Thunder\obj\Debug\Thunder.pdb
